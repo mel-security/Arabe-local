@@ -8,6 +8,7 @@ import { useDatabase, useMutation } from "@/hooks/useDatabase";
 import ArabicText from "@/components/common/ArabicText";
 import AudioPlayer, { PlayButton } from "@/components/common/AudioPlayer";
 import { LevelBadge } from "@/components/common/Badge";
+import ExplainButton from "@/components/common/ExplainButton";
 
 export default function WordDetail() {
   const { id } = useParams<{ id: string }>();
@@ -91,6 +92,17 @@ export default function WordDetail() {
 
         {/* Corps */}
         <div className="p-5 space-y-4">
+          {/* Expliquer avec IA */}
+          <div className="flex justify-end">
+            <ExplainButton
+              subject={`${word.arabic} (${word.transliteration}) = ${word.translation_fr}`}
+              type="word"
+              variant="inline"
+              label="Expliquer avec l'IA"
+              context={{ mode: "explanation", subject: word.arabic, contextRef: "word", contextId: word.id }}
+            />
+          </div>
+
           {/* Traductions */}
           <div className="grid grid-cols-2 gap-3">
             <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-950 border border-blue-100 dark:border-blue-900">

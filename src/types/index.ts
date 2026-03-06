@@ -285,3 +285,103 @@ export interface AudioState {
   currentTime: number;
   volume: number;
 }
+
+// ============================================================
+// LLM / IA
+// ============================================================
+
+export type LLMProvider = "ollama" | "llamacpp" | "none";
+export type ChatMode = "general" | "tutor" | "quiz" | "explanation" | "quran" | "correction";
+export type MessageRole = "user" | "assistant" | "system";
+export type GeneratedContentType = "lesson" | "quiz" | "exercise" | "explanation" | "vocabulary";
+
+export interface LLMSettings {
+  id: number;
+  provider: LLMProvider;
+  model_name: string;
+  base_url: string;
+  temperature: number;
+  max_tokens: number;
+  context_size: number;
+  system_language: Language;
+  tutor_mode: boolean;
+  streaming: boolean;
+  updated_at: string;
+}
+
+export interface ModelConfig {
+  name: string;
+  display_name: string;
+  provider: LLMProvider;
+  language_focus: string;
+  context_size: number;
+  is_recommended: boolean;
+  description_fr: string | null;
+}
+
+export interface ModelStatus {
+  provider: LLMProvider;
+  model: string;
+  available: boolean;
+  base_url: string;
+  error?: string;
+}
+
+export interface ChatMessage {
+  id?: number;
+  session_id?: number;
+  role: MessageRole;
+  content: string;
+  tokens_used?: number;
+  model_used?: string;
+  created_at?: string;
+  isStreaming?: boolean;
+}
+
+export interface ChatSession {
+  id: number;
+  user_id: number;
+  title: string;
+  mode: ChatMode;
+  context_ref: string | null;
+  context_id: number | null;
+  message_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ChatContext {
+  mode: ChatMode;
+  contextRef?: string;
+  contextId?: number;
+  subject?: string;
+  additionalData?: Record<string, unknown>;
+}
+
+export interface GeneratedContent {
+  id: number;
+  user_id: number;
+  content_type: GeneratedContentType;
+  title: string;
+  content_json: Record<string, unknown>;
+  source_context: string | null;
+  model_used: string | null;
+  is_saved: boolean;
+  created_at: string;
+}
+
+export interface StreamChunk {
+  content: string;
+  done: boolean;
+  model?: string;
+  tokens?: number;
+}
+
+export interface LLMContextData {
+  letters?: Array<{ arabic: string; name_fr: string; transliteration: string }>;
+  words?: Array<{ arabic: string; translation_fr: string; transliteration: string }>;
+  verses?: Array<{ arabic_text: string; translation_fr: string; verse_number: number }>;
+  progress?: OverallProgress;
+  user_level?: Level;
+  lesson_context?: string;
+}

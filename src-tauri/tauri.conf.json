@@ -89,7 +89,7 @@
       }
     },
     "security": {
-      "csp": "default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' asset: https://asset.localhost data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self'; media-src 'self' asset: https://asset.localhost blob:; connect-src 'self' https://www.googleapis.com https://www.youtube.com"
+      "csp": "default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' asset: https://asset.localhost data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self'; media-src 'self' asset: https://asset.localhost blob:; connect-src 'self' https://www.googleapis.com https://www.youtube.com http://localhost:11434 http://127.0.0.1:11434"
     },
     "updater": {
       "active": false

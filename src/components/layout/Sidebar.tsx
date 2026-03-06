@@ -1,18 +1,19 @@
 import { NavLink, useLocation } from "react-router-dom";
 import {
   BookOpen, AlignLeft, MessageSquare, BookMarked,
-  Home, Settings, X, GraduationCap
+  Home, Settings, X, GraduationCap, Bot
 } from "lucide-react";
 import { clsx } from "clsx";
 import { useAppStore } from "@/store";
+import { useLLMStore } from "@/store/llmStore";
 import ProgressBar from "@/components/common/ProgressBar";
 
 const navItems = [
-  { to: "/",        icon: Home,        label: "Accueil",   exact: true },
-  { to: "/letters", icon: AlignLeft,   label: "Lettres" },
-  { to: "/reading", icon: BookOpen,    label: "Lecture" },
+  { to: "/",        icon: Home,          label: "Accueil",   exact: true },
+  { to: "/letters", icon: AlignLeft,     label: "Lettres" },
+  { to: "/reading", icon: BookOpen,      label: "Lecture" },
   { to: "/words",   icon: MessageSquare, label: "Mots" },
-  { to: "/quran",   icon: BookMarked,  label: "Coran" },
+  { to: "/quran",   icon: BookMarked,    label: "Coran" },
 ];
 
 export default function Sidebar() {
@@ -21,6 +22,7 @@ export default function Sidebar() {
   const user = useAppStore((s) => s.user);
   const progress = useAppStore((s) => s.progress);
   const location = useLocation();
+  const modelStatus = useLLMStore((s) => s.modelStatus);
 
   const isActive = (to: string, exact = false) => {
     if (exact) return location.pathname === to;
@@ -111,8 +113,25 @@ export default function Sidebar() {
           </div>
         )}
 
-        {/* Paramètres */}
-        <div className="p-3 border-t border-sand-100 dark:border-gray-800">
+        {/* IA & Paramètres */}
+        <div className="p-3 border-t border-sand-100 dark:border-gray-800 space-y-1">
+          <NavLink
+            to="/ai-tutor"
+            onClick={() => setSidebarOpen(false)}
+            className={clsx("nav-item", isActive("/ai-tutor") && "active")}
+          >
+            <Bot className="w-4 h-4 flex-shrink-0" />
+            <span className="flex-1">Assistant IA</span>
+            {/* Indicateur de statut du modèle */}
+            <span className={clsx(
+              "w-2 h-2 rounded-full flex-shrink-0",
+              modelStatus?.available
+                ? "bg-green-400"
+                : modelStatus === null
+                  ? "bg-gray-300 dark:bg-gray-600"
+                  : "bg-orange-400"
+            )} />
+          </NavLink>
           <NavLink
             to="/settings"
             onClick={() => setSidebarOpen(false)}

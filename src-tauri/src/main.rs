@@ -108,6 +108,15 @@ fn main() {
             commands::progress::get_module_progress,
             commands::progress::get_recent_activity,
             commands::progress::get_streak,
+            // Commandes LLM / IA
+            commands::llm::get_llm_settings,
+            commands::llm::update_llm_settings,
+            commands::llm::get_chat_sessions,
+            commands::llm::create_chat_session,
+            commands::llm::delete_chat_session,
+            commands::llm::get_chat_messages,
+            commands::llm::save_chat_message,
+            commands::llm::clear_chat_history,
         ])
         .run(tauri::generate_context!())
         .expect("Erreur lors du démarrage de l'application Tauri");

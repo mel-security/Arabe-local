@@ -1,17 +1,20 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { Menu, ArrowLeft, Flame, Sun, Moon } from "lucide-react";
+import { Menu, ArrowLeft, Flame, Sun, Moon, Bot } from "lucide-react";
 import { clsx } from "clsx";
 import { useAppStore } from "@/store";
+import { useLLMStore } from "@/store/llmStore";
 import { userApi } from "@/services/database";
 import toast from "react-hot-toast";
 
 const routeTitles: Record<string, string> = {
-  "":        "Accueil",
-  "letters": "Lettres arabes",
-  "reading": "Lecture",
-  "words":   "Vocabulaire",
-  "quran":   "Coran",
-  "settings":"Paramètres",
+  "":           "Accueil",
+  "letters":    "Lettres arabes",
+  "reading":    "Lecture",
+  "words":      "Vocabulaire",
+  "quran":      "Coran",
+  "settings":   "Paramètres",
+  "ai-tutor":   "Tuteur IA",
+  "llm-settings": "Paramètres IA",
 };
 
 export default function Header() {
@@ -20,6 +23,8 @@ export default function Header() {
   const user           = useAppStore((s) => s.user);
   const streak         = useAppStore((s) => s.streak);
   const setUser        = useAppStore((s) => s.setUser);
+  const setChatOpen    = useLLMStore((s) => s.setChatOpen);
+  const modelStatus    = useLLMStore((s) => s.modelStatus);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -83,6 +88,26 @@ export default function Header() {
             </span>
           </div>
         )}
+
+        {/* Bouton IA */}
+        <button
+          onClick={() => setChatOpen(true)}
+          title="Ouvrir l'assistant IA"
+          className={clsx(
+            "btn-icon relative transition-colors",
+            modelStatus?.available
+              ? "text-accent-500 hover:text-accent-600 dark:text-accent-400"
+              : "text-gray-400 hover:text-gray-500 dark:text-gray-500"
+          )}
+          aria-label="Assistant IA"
+        >
+          <Bot className="w-5 h-5" />
+          {/* Indicateur disponibilité */}
+          <span className={clsx(
+            "absolute top-0.5 right-0.5 w-2 h-2 rounded-full border-2 border-white dark:border-gray-900",
+            modelStatus?.available ? "bg-green-400" : "bg-gray-300 dark:bg-gray-600"
+          )} />
+        </button>
 
         {/* Bouton thème */}
         <button

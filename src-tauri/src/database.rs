@@ -271,6 +271,99 @@ fn create_schema(conn: &Connection) -> Result<()> {
         CREATE INDEX IF NOT EXISTS idx_activity_user_date ON activity_log(user_id, created_at);
         CREATE INDEX IF NOT EXISTS idx_words_category ON vocabulary_words(category_id);
         CREATE INDEX IF NOT EXISTS idx_words_level ON vocabulary_words(level);
+
+        -- ============================================================
+        -- TABLE: llm_settings (paramètres LLM)
+        -- ============================================================
+        CREATE TABLE IF NOT EXISTS llm_settings (
+            id              INTEGER PRIMARY KEY DEFAULT 1,
+            provider        TEXT NOT NULL DEFAULT 'ollama' CHECK(provider IN ('ollama','llamacpp','none')),
+            model_name      TEXT NOT NULL DEFAULT 'qwen2.5:7b',
+            base_url        TEXT NOT NULL DEFAULT 'http://localhost:11434',
+            temperature     REAL NOT NULL DEFAULT 0.7,
+            max_tokens      INTEGER NOT NULL DEFAULT 2048,
+            context_size    INTEGER NOT NULL DEFAULT 4096,
+            system_language TEXT NOT NULL DEFAULT 'fr' CHECK(system_language IN ('fr','en')),
+            tutor_mode      INTEGER NOT NULL DEFAULT 1,
+            streaming       INTEGER NOT NULL DEFAULT 1,
+            updated_at      TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+
+        -- ============================================================
+        -- TABLE: model_registry (modèles connus)
+        -- ============================================================
+        CREATE TABLE IF NOT EXISTS model_registry (
+            id              INTEGER PRIMARY KEY AUTOINCREMENT,
+            name            TEXT NOT NULL UNIQUE,
+            display_name    TEXT NOT NULL,
+            provider        TEXT NOT NULL,
+            language_focus  TEXT NOT NULL DEFAULT 'multilingual',
+            context_size    INTEGER NOT NULL DEFAULT 4096,
+            is_recommended  INTEGER NOT NULL DEFAULT 0,
+            description_fr  TEXT,
+            updated_at      TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+
+        -- ============================================================
+        -- TABLE: chat_sessions (sessions de conversation)
+        -- ============================================================
+        CREATE TABLE IF NOT EXISTS chat_sessions (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            title       TEXT NOT NULL DEFAULT 'Nouvelle conversation',
+            mode        TEXT NOT NULL DEFAULT 'general' CHECK(mode IN ('general','tutor','quiz','explanation','quran','correction')),
+            context_ref TEXT,
+            context_id  INTEGER,
+            message_count INTEGER NOT NULL DEFAULT 0,
+            created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+            updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+
+        -- ============================================================
+        -- TABLE: chat_messages (messages de conversation)
+        -- ============================================================
+        CREATE TABLE IF NOT EXISTS chat_messages (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id  INTEGER NOT NULL REFERENCES chat_sessions(id) ON DELETE CASCADE,
+            role        TEXT NOT NULL CHECK(role IN ('user','assistant','system')),
+            content     TEXT NOT NULL,
+            tokens_used INTEGER,
+            model_used  TEXT,
+            created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+
+        -- ============================================================
+        -- TABLE: generated_content (contenu généré par IA)
+        -- ============================================================
+        CREATE TABLE IF NOT EXISTS generated_content (
+            id              INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id         INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            content_type    TEXT NOT NULL CHECK(content_type IN ('lesson','quiz','exercise','explanation','vocabulary')),
+            title           TEXT NOT NULL,
+            content_json    TEXT NOT NULL DEFAULT '{}',
+            source_context  TEXT,
+            model_used      TEXT,
+            is_saved        INTEGER NOT NULL DEFAULT 0,
+            created_at      TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+
+        -- ============================================================
+        -- TABLE: user_learning_context (contexte d'apprentissage)
+        -- ============================================================
+        CREATE TABLE IF NOT EXISTS user_learning_context (
+            user_id         INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+            recent_letters  TEXT DEFAULT '[]',
+            weak_areas      TEXT DEFAULT '[]',
+            daily_goal_met  INTEGER NOT NULL DEFAULT 0,
+            last_quiz_score REAL,
+            preferred_mode  TEXT DEFAULT 'tutor',
+            updated_at      TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+
+        -- INDEX LLM
+        CREATE INDEX IF NOT EXISTS idx_chat_sessions_user ON chat_sessions(user_id, updated_at);
+        CREATE INDEX IF NOT EXISTS idx_chat_messages_session ON chat_messages(session_id);
+        CREATE INDEX IF NOT EXISTS idx_generated_content_user ON generated_content(user_id, content_type);
     ")?;
 
     Ok(())
@@ -298,6 +391,42 @@ fn seed_if_empty(conn: &Connection) -> Result<()> {
         [],
         |row| row.get(0),
     )?;
+
+    // Insérer les paramètres LLM par défaut
+    let llm_count: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM llm_settings",
+        [],
+        |row| row.get(0),
+    )?;
+
+    if llm_count == 0 {
+        info!("Insertion des paramètres LLM par défaut");
+        conn.execute(
+            "INSERT INTO llm_settings (id, provider, model_name, base_url, temperature, max_tokens, context_size, system_language, tutor_mode, streaming) VALUES (1, 'ollama', 'qwen2.5:7b', 'http://localhost:11434', 0.7, 2048, 4096, 'fr', 1, 1)",
+            [],
+        )?;
+
+        // Insérer les modèles connus
+        let models = vec![
+            ("qwen2.5:7b", "Qwen 2.5 7B", "ollama", "multilingual", 32768, 1,
+             "Modèle polyvalent, excellent pour l'arabe et le français"),
+            ("qwen2.5:3b", "Qwen 2.5 3B", "ollama", "multilingual", 32768, 0,
+             "Version légère de Qwen 2.5, idéale pour PC moins puissants"),
+            ("command-r:35b", "Command R 35B", "ollama", "arabic", 128000, 0,
+             "Excellent pour l'arabe, nécessite 20+ Go de RAM"),
+            ("aya:8b", "Aya 8B (Cohere)", "ollama", "arabic", 8192, 0,
+             "Spécialisé multilingue avec bon support arabe"),
+            ("mistral:7b", "Mistral 7B", "ollama", "multilingual", 8192, 0,
+             "Bon modèle général, support arabe limité"),
+        ];
+
+        for (name, display, provider, lang, ctx, rec, desc) in models {
+            conn.execute(
+                "INSERT OR IGNORE INTO model_registry (name, display_name, provider, language_focus, context_size, is_recommended, description_fr) VALUES (?1,?2,?3,?4,?5,?6,?7)",
+                params![name, display, provider, lang, ctx, rec, desc],
+            )?;
+        }
+    }
 
     if cat_count == 0 {
         info!("Insertion des catégories de vocabulaire");

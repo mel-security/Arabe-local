@@ -20,6 +20,9 @@ import type {
   ModuleProgress,
   ActivityItem,
   StreakInfo,
+  LLMSettings,
+  ChatSession,
+  ChatMessage as ChatMsg,
 } from "@/types";
 
 // Détection de l'environnement Tauri
@@ -162,6 +165,36 @@ export const progressApi = {
 };
 
 // ============================================================
+// API LLM
+// ============================================================
+
+export const llmApi = {
+  getSettings: () =>
+    invoke<LLMSettings>("get_llm_settings"),
+
+  updateSettings: (input: Partial<LLMSettings>) =>
+    invoke<LLMSettings>("update_llm_settings", { input }),
+
+  getSessions: (limit?: number) =>
+    invoke<ChatSession[]>("get_chat_sessions", { limit }),
+
+  createSession: (title: string, mode: string) =>
+    invoke<ChatSession>("create_chat_session", { title, mode }),
+
+  deleteSession: (sessionId: number) =>
+    invoke<void>("delete_chat_session", { sessionId }),
+
+  getMessages: (sessionId: number) =>
+    invoke<ChatMsg[]>("get_chat_messages", { sessionId }),
+
+  saveMessage: (sessionId: number, role: string, content: string, modelUsed?: string) =>
+    invoke<ChatMsg>("save_chat_message", { sessionId, role, content, modelUsed }),
+
+  clearHistory: () =>
+    invoke<void>("clear_chat_history"),
+};
+
+// ============================================================
 // DONNÉES MOCK POUR LE MODE WEB (développement sans Tauri)
 // ============================================================
 
@@ -223,6 +256,27 @@ function getMockData<T>(command: string, _args?: Record<string, unknown>): T {
     save_reading_position: null,
     get_reading_position: null,
     search_quran: [],
+
+    get_llm_settings: {
+      id: 1,
+      provider: "ollama",
+      model_name: "qwen2.5:7b",
+      base_url: "http://localhost:11434",
+      temperature: 0.7,
+      max_tokens: 2048,
+      context_size: 4096,
+      system_language: "fr",
+      tutor_mode: true,
+      streaming: true,
+      updated_at: new Date().toISOString(),
+    } as LLMSettings,
+    update_llm_settings: null,
+    get_chat_sessions: [] as ChatSession[],
+    create_chat_session: { id: 1, user_id: 1, title: "Test", mode: "general", context_ref: null, context_id: null, message_count: 0, created_at: new Date().toISOString(), updated_at: new Date().toISOString() } as ChatSession,
+    delete_chat_session: null,
+    get_chat_messages: [] as ChatMsg[],
+    save_chat_message: null,
+    clear_chat_history: null,
 
     get_overall_progress: {
       letters_total: 28, letters_learned: 0,

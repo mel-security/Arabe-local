@@ -11,6 +11,7 @@ import { useDatabase, useMutation } from "@/hooks/useDatabase";
 import ArabicText from "@/components/common/ArabicText";
 import { PlayButton } from "@/components/common/AudioPlayer";
 import { LevelBadge } from "@/components/common/Badge";
+import ExplainButton from "@/components/common/ExplainButton";
 import { speakArabic } from "@/services/audio";
 import toast from "react-hot-toast";
 
@@ -146,6 +147,17 @@ export default function LetterDetail() {
 
         {/* Corps de la carte */}
         <div className="p-5 md:p-6">
+          {/* Bouton Expliquer avec IA */}
+          <div className="flex justify-end mb-3">
+            <ExplainButton
+              subject={`${letter.name_fr} (${letter.arabic})`}
+              type="letter"
+              variant="inline"
+              label="Expliquer avec l'IA"
+              context={{ mode: "explanation", subject: letter.name_fr, contextRef: "letter", contextId: letter.id }}
+            />
+          </div>
+
           {/* Description */}
           {letter.description_fr && (
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-5 bg-sand-50 dark:bg-gray-800 rounded-xl p-4">

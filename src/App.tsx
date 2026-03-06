@@ -5,10 +5,13 @@ import { useAppStore } from "@/store";
 import { userApi, progressApi } from "@/services/database";
 import Layout from "@/components/layout/Layout";
 import LoadingScreen from "@/components/common/LoadingScreen";
+import ChatDrawer from "@/components/chat/ChatDrawer";
 
 // Lazy loading des pages pour optimiser le chargement initial
-const Home       = lazy(() => import("@/pages/Home"));
-const Settings   = lazy(() => import("@/pages/Settings"));
+const Home        = lazy(() => import("@/pages/Home"));
+const Settings    = lazy(() => import("@/pages/Settings"));
+const LLMSettings = lazy(() => import("@/pages/LLMSettings"));
+const AITutor     = lazy(() => import("@/pages/AITutor"));
 
 // Modules
 const LettersModule  = lazy(() => import("@/pages/letters/LettersModule"));
@@ -67,6 +70,8 @@ export default function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="ai-tutor" element={<AITutor />} />
+            <Route path="llm-settings" element={<LLMSettings />} />
 
             {/* Module Lettres */}
             <Route path="letters" element={<LettersModule />} />
@@ -91,6 +96,9 @@ export default function App() {
           </Route>
         </Routes>
       </Suspense>
+
+      {/* Chat IA global — accessible depuis toute l'appli */}
+      <ChatDrawer />
 
       <Toaster
         position="top-right"

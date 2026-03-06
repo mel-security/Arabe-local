@@ -11,6 +11,7 @@ import { quranApi } from "@/services/database";
 import { useDatabase, useMutation } from "@/hooks/useDatabase";
 import ArabicText from "@/components/common/ArabicText";
 import { PlayButton } from "@/components/common/AudioPlayer";
+import ExplainButton from "@/components/common/ExplainButton";
 import { speakArabic } from "@/services/audio";
 import { useAppStore } from "@/store";
 import type { Verse } from "@/types";
@@ -182,6 +183,7 @@ export default function SurahReader() {
               verse={verse}
               displayMode={displayMode}
               translationLang={translationLang}
+              surahName={surah.name_fr}
               onFavorite={() => handleFavorite(verse)}
               onPlay={() => speakArabic(verse.arabic_text)}
             />
@@ -228,11 +230,12 @@ interface VerseCardProps {
   verse: Verse;
   displayMode: DisplayMode;
   translationLang: TranslationLang;
+  surahName?: string;
   onFavorite: () => void;
   onPlay: () => void;
 }
 
-function VerseCard({ verse, displayMode, translationLang, onFavorite, onPlay }: VerseCardProps) {
+function VerseCard({ verse, displayMode, translationLang, surahName, onFavorite, onPlay }: VerseCardProps) {
   return (
     <motion.div
       className="verse-container group"
@@ -254,6 +257,17 @@ function VerseCard({ verse, displayMode, translationLang, onFavorite, onPlay }: 
 
         {/* Actions */}
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <ExplainButton
+            subject={`${surahName ?? "Verset"} ${verse.verse_number}: ${verse.arabic_text}`}
+            type="verse"
+            variant="icon"
+            label="Expliquer ce verset avec l'IA"
+            context={{
+              mode: "quran",
+              subject: `Verset ${verse.verse_number}`,
+              additionalData: { verses: [{ arabic_text: verse.arabic_text, translation_fr: verse.translation_fr, verse_number: verse.verse_number }] }
+            }}
+          />
           <PlayButton
             src={verse.audio_file}
             arabicText={verse.arabic_text}
