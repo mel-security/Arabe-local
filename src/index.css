@@ -1,0 +1,352 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   VARIABLES CSS GLOBALES
+   ============================================================ */
+:root {
+  --font-size-arabic-scale: 1;
+  --transition-speed: 200ms;
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  html {
+    @apply antialiased;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  body {
+    @apply bg-sand-50 text-gray-900 font-sans;
+    @apply transition-colors duration-200;
+  }
+
+  html.dark body {
+    @apply bg-gray-950 text-gray-100;
+  }
+
+  /* Scrollbar personnalisée */
+  ::-webkit-scrollbar {
+    @apply w-1.5 h-1.5;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-sand-300 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-sand-400;
+  }
+
+  html.dark ::-webkit-scrollbar-thumb {
+    @apply bg-gray-700;
+  }
+
+  /* Sélection de texte */
+  ::selection {
+    @apply bg-primary-200 text-primary-900;
+  }
+}
+
+/* ============================================================
+   COMPOSANTS RÉUTILISABLES
+   ============================================================ */
+@layer components {
+
+  /* --- Texte arabe --- */
+  .arabic-text {
+    font-family: "Scheherazade New", "Amiri", "Traditional Arabic", serif;
+    direction: rtl;
+    unicode-bidi: bidi-override;
+    line-height: 1.8;
+    letter-spacing: 0.02em;
+  }
+
+  .arabic-display {
+    @apply arabic-text text-arabic-xl font-bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .arabic-verse {
+    @apply arabic-text text-arabic-lg leading-loose;
+    word-spacing: 0.1em;
+  }
+
+  .arabic-word {
+    @apply arabic-text text-arabic-md;
+  }
+
+  .arabic-sm {
+    @apply arabic-text text-arabic-sm;
+  }
+
+  /* --- Taille de police dynamique --- */
+  [data-font-size="1"] .arabic-display { font-size: 3rem; }
+  [data-font-size="2"] .arabic-display { font-size: 4rem; }
+  [data-font-size="3"] .arabic-display { font-size: 5rem; }
+  [data-font-size="4"] .arabic-display { font-size: 6.5rem; }
+  [data-font-size="5"] .arabic-display { font-size: 8rem; }
+
+  [data-font-size="1"] .arabic-verse { font-size: 1.25rem; }
+  [data-font-size="2"] .arabic-verse { font-size: 1.5rem; }
+  [data-font-size="3"] .arabic-verse { font-size: 1.75rem; }
+  [data-font-size="4"] .arabic-verse { font-size: 2.25rem; }
+  [data-font-size="5"] .arabic-verse { font-size: 3rem; }
+
+  /* --- Carte module --- */
+  .module-card {
+    @apply relative overflow-hidden rounded-2xl p-6 cursor-pointer;
+    @apply transition-all duration-300;
+    @apply hover:scale-105 hover:shadow-xl;
+    @apply active:scale-95;
+  }
+
+  /* --- Bouton principal --- */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl;
+    @apply bg-primary-500 hover:bg-primary-600 text-white;
+    @apply font-medium text-sm;
+    @apply transition-all duration-200;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl;
+    @apply bg-white hover:bg-sand-50 text-gray-700;
+    @apply border border-sand-200;
+    @apply font-medium text-sm;
+    @apply transition-all duration-200;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply active:scale-95;
+  }
+
+  html.dark .btn-secondary {
+    @apply bg-gray-800 hover:bg-gray-700 text-gray-200 border-gray-600;
+  }
+
+  .btn-icon {
+    @apply inline-flex items-center justify-center w-10 h-10 rounded-xl;
+    @apply transition-all duration-200 active:scale-90;
+  }
+
+  /* --- Badge niveau --- */
+  .level-badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium;
+  }
+
+  .level-beginner   { @apply bg-green-100 text-green-800; }
+  .level-intermediate { @apply bg-blue-100 text-blue-800; }
+  .level-advanced   { @apply bg-purple-100 text-purple-800; }
+  .level-expert     { @apply bg-orange-100 text-orange-800; }
+
+  /* --- Carte lettre --- */
+  .letter-card {
+    @apply relative flex flex-col items-center justify-center;
+    @apply rounded-2xl border-2 p-4 cursor-pointer;
+    @apply transition-all duration-200;
+    @apply hover:shadow-lg hover:-translate-y-1;
+  }
+
+  .letter-card.learned {
+    @apply border-green-300 bg-green-50;
+  }
+
+  html.dark .letter-card.learned {
+    @apply border-green-700 bg-green-950;
+  }
+
+  /* --- Voyelle arabe --- */
+  .vowel-chip {
+    @apply inline-flex flex-col items-center gap-0.5 px-3 py-2;
+    @apply rounded-xl border border-sand-200 bg-white;
+    @apply hover:border-primary-300 hover:bg-primary-50;
+    @apply transition-all duration-150 cursor-pointer;
+  }
+
+  html.dark .vowel-chip {
+    @apply border-gray-600 bg-gray-800 hover:border-primary-500 hover:bg-primary-950;
+  }
+
+  /* --- Verset Coran --- */
+  .verse-container {
+    @apply group relative rounded-2xl p-4 md:p-6;
+    @apply bg-white border border-sand-100;
+    @apply transition-all duration-200 hover:shadow-md;
+  }
+
+  html.dark .verse-container {
+    @apply bg-gray-900 border-gray-700;
+  }
+
+  /* --- Barre de progression --- */
+  .progress-bar {
+    @apply h-2 rounded-full overflow-hidden bg-sand-100;
+  }
+
+  html.dark .progress-bar {
+    @apply bg-gray-700;
+  }
+
+  .progress-fill {
+    @apply h-full rounded-full transition-all duration-500;
+    @apply bg-gradient-to-r from-primary-400 to-primary-600;
+  }
+
+  /* --- Navigation --- */
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl;
+    @apply text-gray-600 hover:text-gray-900 hover:bg-sand-100;
+    @apply transition-all duration-150 cursor-pointer;
+    @apply font-medium text-sm;
+  }
+
+  .nav-item.active {
+    @apply bg-primary-50 text-primary-700;
+  }
+
+  html.dark .nav-item {
+    @apply text-gray-400 hover:text-gray-100 hover:bg-gray-800;
+  }
+
+  html.dark .nav-item.active {
+    @apply bg-primary-950 text-primary-300;
+  }
+
+  /* --- Lecteur audio --- */
+  .audio-player {
+    @apply flex items-center gap-3 px-4 py-3 rounded-2xl;
+    @apply bg-sand-50 border border-sand-200;
+  }
+
+  html.dark .audio-player {
+    @apply bg-gray-800 border-gray-700;
+  }
+
+  /* --- Quiz option --- */
+  .quiz-option {
+    @apply flex items-center gap-3 px-4 py-3.5 rounded-xl;
+    @apply border-2 border-sand-200 bg-white;
+    @apply cursor-pointer transition-all duration-200;
+    @apply hover:border-primary-300 hover:bg-primary-50;
+    @apply font-medium text-sm;
+  }
+
+  .quiz-option.selected-correct {
+    @apply border-green-500 bg-green-50 text-green-800;
+  }
+
+  .quiz-option.selected-wrong {
+    @apply border-red-500 bg-red-50 text-red-800;
+  }
+
+  .quiz-option.show-correct {
+    @apply border-green-400 bg-green-50 text-green-700;
+  }
+
+  html.dark .quiz-option {
+    @apply border-gray-600 bg-gray-900 hover:border-primary-500 hover:bg-primary-950;
+  }
+
+  /* --- Loader --- */
+  .spinner {
+    @apply inline-block w-6 h-6 border-2 border-primary-200 border-t-primary-500 rounded-full;
+    animation: spin 0.6s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+}
+
+/* ============================================================
+   UTILITAIRES PERSONNALISÉS
+   ============================================================ */
+@layer utilities {
+  .rtl { direction: rtl; }
+  .ltr { direction: ltr; }
+
+  /* Ombre douce */
+  .shadow-warm {
+    box-shadow: 0 4px 24px -4px rgba(224, 148, 21, 0.15),
+                0 2px 8px -2px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Motif géométrique islamique en fond */
+  .bg-islamic-pattern {
+    background-image:
+      radial-gradient(circle at 50% 50%, rgba(224, 148, 21, 0.06) 0%, transparent 60%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e09415' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Texte avec gradient doré */
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #c47210, #f0c754, #e09415);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Ligne décorative */
+  .divider-arabic {
+    @apply relative flex items-center gap-3 my-4;
+  }
+
+  .divider-arabic::before,
+  .divider-arabic::after {
+    content: '';
+    @apply flex-1 h-px bg-sand-200;
+  }
+}
+
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark .bg-sand-50 { background-color: #1a1a2e; }
+html.dark .bg-white { background-color: #1e2130; }
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Apparition progressive des cartes */
+.stagger-children > * {
+  animation: fadeInUp 0.4s ease-out backwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger-children > *:nth-child(8) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

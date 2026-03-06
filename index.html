@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Application locale d'apprentissage de l'arabe" />
+    <title>عربي — Apprendre l'Arabe</title>
+
+    <!-- Google Fonts: Amiri (Arabic), Inter (Latin) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Scheherazade+New:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Fallback si hors ligne : la police système sera utilisée -->
+
+    <style>
+      /* Chargement initial sans flash */
+      html { background-color: #fdf8ec; }
+      html.dark { background-color: #1a1a2e; }
+      body { margin: 0; opacity: 0; transition: opacity 0.2s; }
+      body.loaded { opacity: 1; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.add('loaded');
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+# Node
+node_modules/
+dist/
+.vite/
+
+# Rust / Tauri
+src-tauri/target/
+src-tauri/WixTools/
+
+# Base de données locale (ne pas versionner les données utilisateur)
+*.db
+*.db-shm
+*.db-wal
+
+# Médias (trop volumineux pour git — utiliser LFS ou dépôt séparé)
+public/assets/audio/
+public/assets/images/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+.directory
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Variables d'environnement
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Coverage
+coverage/
