@@ -1,0 +1,26 @@
+{
+  "_comment": "Ajouter ces dépendances au package.json RACINE pour le build Android",
+  "_usage": "Copier le contenu dans le package.json principal ou exécuter : npm install <packages>",
+
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.0"
+  },
+
+  "dependencies": {
+    "@capacitor/core": "^6.1.0",
+    "@capacitor/android": "^6.1.0",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/filesystem": "^6.0.0",
+    "@capacitor/network": "^6.0.0",
+    "@capacitor/toast": "^6.0.0",
+    "@capacitor-community/sqlite": "^6.0.1"
+  },
+
+  "scripts-to-add": {
+    "android:sync": "cap sync android",
+    "android:open": "cap open android",
+    "android:build": "npm run build && cap sync android",
+    "android:run": "cap run android",
+    "android:copy": "cap copy android"
+  }
+}

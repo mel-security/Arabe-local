@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- ============================================================
+         PERMISSIONS REQUISES
+         ============================================================ -->
+
+    <!-- Réseau (pour chargement des polices Google au premier lancement) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Stockage (téléchargement du modèle Gemma) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+
+    <!-- Notifications (progression du téléchargement du modèle) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- TTS pour la prononciation arabe -->
+    <uses-permission android:name="android.permission.BIND_TEXT_TO_SPEECH_SERVICE" />
+
+    <!-- GPU requis pour l'accélération MediaPipe (optionnel, fallback CPU) -->
+    <uses-feature android:name="android.hardware.opengles.aep" android:required="false" />
+    <uses-feature android:name="android.hardware.vulkan.level" android:required="false" />
+
+    <!-- ============================================================
+         DÉCLARATION DE L'APPLICATION
+         ============================================================ -->
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="false"
+        android:largeHeap="true"
+        android:hardwareAccelerated="true">
+
+        <!-- Activité principale (Capacitor WebView) -->
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Service de téléchargement du modèle LLM en arrière-plan -->
+        <service
+            android:name=".services.ModelDownloadService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- Provider pour les fichiers du modèle -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+    </application>
+
+</manifest>

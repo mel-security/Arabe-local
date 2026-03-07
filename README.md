@@ -1,7 +1,7 @@
 # عربي — Arabe Local
 
 **Application pédagogique locale d'apprentissage de l'arabe**
-Linux Desktop (Tauri) · React · SQLite · TypeScript
+Linux Desktop (Tauri) · Android (Capacitor + Gemma 2B) · React · SQLite · TypeScript
 
 ---
 
@@ -202,13 +202,85 @@ Les audio libres de droits recommandés :
 
 ---
 
-## Packaging Android (futur)
+## 📱 Application Android — IA locale avec Gemma 2B
 
-Voir `docs/ANDROID_GUIDE.md`.
-La migration vers Capacitor ou Tauri Mobile est préparée :
-- Architecture frontend React pure (pas de dépendance Tauri directe dans la UI)
-- Service `database.ts` abstrait Tauri vs Web
-- SQLite compatible via `@capacitor-community/sqlite`
+> **`android-port/`** contient le portage complet vers Android avec un LLM embarqué.
+
+### Architecture Android
+
+L'application Android utilise **Capacitor** pour wrapper l'interface React existante,
+et **MediaPipe LLM Inference API** pour exécuter **Gemma 2B Q4** entièrement sur l'appareil.
+
+```
+Interface React ←→ Capacitor WebView ←→ GemmaLLMPlugin.kt ←→ MediaPipe ←→ Gemma 2B Q4
+```
+
+Aucune donnée ne quitte l'appareil. L'inférence est 100% locale.
+
+### Démarrage rapide Android
+
+```bash
+# 1. Prérequis : Java 17+, Android Studio, Android SDK (API 26+)
+
+# 2. Setup de l'environnement (une seule fois)
+./android-port/scripts/setup-android.sh
+
+# 3. Télécharger le modèle Gemma 2B Q4 (~1.5 Go)
+./android-port/scripts/download-model.sh --variant gpu   # GPU (recommandé)
+./android-port/scripts/download-model.sh --variant cpu   # CPU (universel)
+
+# 4. Construire l'APK
+./android-port/scripts/build-apk.sh
+
+# 5. Installer et tester
+adb install -r android-port/output/arabe-local-debug-$(date +%Y%m%d).apk
+```
+
+### Caractéristiques du module Android
+
+| Fonctionnalité | Détail |
+|---------------|--------|
+| **Modèle LLM** | Gemma 2B IT — quantifié INT4 (Q4) |
+| **Taille du modèle** | ~1.5 Go (téléchargé au premier lancement) |
+| **Inférence** | MediaPipe LLM Inference API (Google) |
+| **Accélération** | GPU (Adreno/Mali) ou CPU fallback |
+| **RAM requise** | 4 Go minimum, 6 Go recommandé |
+| **Android minimum** | API 26 (Android 8.0 Oreo) |
+| **Architecture** | arm64-v8a |
+| **Streaming** | Token par token via événements Capacitor |
+| **Stockage** | SQLite local via @capacitor-community/sqlite |
+| **Données privées** | 100% local — aucune donnée envoyée en ligne |
+
+### Modules LLM disponibles sur Android
+
+Mêmes fonctionnalités que la version desktop (Ollama) :
+- 💬 Chat avec tuteur IA (6 modes)
+- 📖 Explication des lettres, mots et versets coraniques
+- 🧠 Quiz générés dynamiquement
+- ✏️ Correction de l'arabe écrit
+- 📚 Génération de leçons quotidiennes adaptées
+
+### Pré-requis minimaux
+
+```
+Java JDK 17+
+Android Studio 2023.3+ (ou SDK CLI)
+Android SDK API 26+
+Appareil physique : 4+ Go RAM (6 Go recommandé)
+Connexion internet : uniquement pour le téléchargement initial du modèle
+```
+
+### Documentation complète
+
+📄 **[android-port/ANDROID_BUILD.md](android-port/ANDROID_BUILD.md)**
+
+Contenu :
+- Installation détaillée Java, Android SDK, NDK
+- Options de distribution du modèle (bundlé / téléchargement / Play Asset Delivery)
+- Procédure de signature APK et publication Play Store
+- Architecture du plugin Kotlin GemmaLLMPlugin
+- Guide d'intégration TypeScript ↔ natif
+- Résolution des problèmes courants
 
 ---
 
