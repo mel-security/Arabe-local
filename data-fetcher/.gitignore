@@ -1,0 +1,4 @@
+node_modules/
+output/*.sql
+output/words-no-image.txt
+.env

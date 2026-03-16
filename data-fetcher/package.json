@@ -1,0 +1,21 @@
+{
+  "name": "arabe-local-data-fetcher",
+  "version": "1.0.0",
+  "description": "Auto-remplissage des assets audio, images et texte Coran pour l'app Arabe Local",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "fetch": "node index.js",
+    "fetch:letters": "node index.js --letters",
+    "fetch:quran": "node index.js --quran",
+    "fetch:words": "node index.js --words",
+    "fetch:all": "node index.js --all",
+    "verify": "node index.js --verify",
+    "dry-run": "node index.js --all --dry-run"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.4.3"
+  }
+}
