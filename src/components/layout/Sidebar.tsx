@@ -11,6 +11,7 @@ import ProgressBar from "@/components/common/ProgressBar";
 const navItems = [
   { to: "/",        icon: Home,          label: "Accueil",   exact: true },
   { to: "/letters", icon: AlignLeft,     label: "Lettres" },
+  { to: "/grammar", icon: GraduationCap, label: "Grammaire" },
   { to: "/reading", icon: BookOpen,      label: "Lecture" },
   { to: "/words",   icon: MessageSquare, label: "Mots" },
   { to: "/quran",   icon: BookMarked,    label: "Coran" },

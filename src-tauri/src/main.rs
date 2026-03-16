@@ -108,6 +108,13 @@ fn main() {
             commands::progress::get_module_progress,
             commands::progress::get_recent_activity,
             commands::progress::get_streak,
+            // Commandes grammaire
+            commands::grammar::get_grammar_categories,
+            commands::grammar::get_grammar_rules,
+            commands::grammar::mark_grammar_learned,
+            // Commandes bootstrap
+            commands::bootstrap::check_bootstrap_status,
+            commands::bootstrap::run_migration,
             // Commandes LLM / IA
             commands::llm::get_llm_settings,
             commands::llm::update_llm_settings,

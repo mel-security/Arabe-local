@@ -1,7 +1,9 @@
 pub mod user;
 pub mod letters;
 pub mod words;
+pub mod grammar;
 pub mod reading;
 pub mod quran;
 pub mod progress;
 pub mod llm;
+pub mod bootstrap;

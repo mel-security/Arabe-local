@@ -28,6 +28,13 @@ const WordQuiz       = lazy(() => import("@/pages/words/WordQuiz"));
 const QuranModule    = lazy(() => import("@/pages/quran/QuranModule"));
 const SurahReader    = lazy(() => import("@/pages/quran/SurahReader"));
 
+// Module Grammaire
+const GrammarModule  = lazy(() => import("@/pages/grammar/GrammarModule"));
+const GrammarLesson  = lazy(() => import("@/pages/grammar/GrammarLesson"));
+
+// Onboarding
+const Onboarding     = lazy(() => import("@/pages/Onboarding"));
+
 export default function App() {
   const { setUser, setSettings, setProgress, setStreak } = useAppStore();
 
@@ -67,6 +74,9 @@ export default function App() {
     <BrowserRouter>
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
+          {/* Onboarding */}
+          <Route path="/onboarding" element={<Onboarding />} />
+
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="settings" element={<Settings />} />
@@ -86,6 +96,10 @@ export default function App() {
             <Route path="words" element={<WordsModule />} />
             <Route path="words/:id" element={<WordDetail />} />
             <Route path="words/quiz" element={<WordQuiz />} />
+
+            {/* Module Grammaire */}
+            <Route path="grammar" element={<GrammarModule />} />
+            <Route path="grammar/:slug" element={<GrammarLesson />} />
 
             {/* Module Coran */}
             <Route path="quran" element={<QuranModule />} />
